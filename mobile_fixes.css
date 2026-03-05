@@ -1,0 +1,83 @@
+/* Mobile/Tablet fixes for the portfolio (keeps your aesthetic) */
+
+/* 1) Disable custom cursor on touch */
+@media (pointer:coarse){
+  body{ cursor:auto !important; }
+  #cd,#cr{ display:none !important; }
+}
+
+/* 2) Fluid spacing instead of hard 64px everywhere */
+:root{
+  --px: clamp(16px, 4.5vw, 64px);
+  --py: clamp(70px, 10vw, 110px);
+}
+
+@media (max-width: 960px){
+  nav, nav.c, footer{ padding-left: var(--px) !important; padding-right: var(--px) !important; }
+  #hero, section, .dv{ padding-left: var(--px) !important; padding-right: var(--px) !important; }
+  section{ padding-top: var(--py) !important; padding-bottom: var(--py) !important; }
+}
+
+/* 3) Make the nav usable on mobile (keep links visible instead of hiding them) */
+@media (max-width: 960px){
+  nav ul{
+    display:flex !important;
+    gap:18px !important;
+    overflow-x:auto;
+    -webkit-overflow-scrolling:touch;
+    padding: 6px 0;
+    margin-left: 14px;
+  }
+  nav ul::-webkit-scrollbar{ height: 0; }
+  nav ul a{
+    white-space:nowrap;
+    font-size:9px !important;
+    letter-spacing:.14em !important;
+  }
+}
+
+/* 4) Prevent the right hero stats (absolute block) from covering content */
+@media (max-width: 960px){
+  .hcd{ display:none !important; }
+  .hsh{ display:none !important; }
+}
+
+/* 5) Project title blocks: stack nicely on small screens */
+@media (max-width: 720px){
+  .eng-titleblock{ flex-direction:column !important; }
+  .etb-main{
+    border-right:none !important;
+    border-bottom:1px solid var(--border) !important;
+  }
+  .etb-rev,.etb-status{
+    width:100% !important;
+    min-width: unset !important;
+    border-right:none !important;
+    border-bottom:1px solid var(--border) !important;
+    flex-direction: row !important;
+    justify-content: space-between !important;
+    padding: 12px 18px !important;
+  }
+  .etb-status{ border-bottom:none !important; }
+}
+
+/* 6) Specs table: readable on phones */
+@media (max-width: 560px){
+  .spec-table tr{ display:block; padding: 10px 0; }
+  .spec-table td{ display:block; width:auto !important; }
+  .spec-table td:first-child{ padding-right:0 !important; margin-bottom:4px; }
+}
+
+/* 7) Metrics row: wrap cleanly */
+@media (max-width: 560px){
+  .eng-metrics{ flex-wrap:wrap !important; }
+  .em-item{
+    border-right:none !important;
+    border-top:1px solid var(--border) !important;
+    min-width: unset !important;
+    flex: 1 1 50% !important;
+  }
+}
+
+/* 8) Ensure the blueprint canvas always fits */
+#bpc{ width:100% !important; height:100% !important; }
