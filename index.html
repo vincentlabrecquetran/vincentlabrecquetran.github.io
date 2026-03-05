@@ -1,0 +1,1339 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Vincent Labrecque-Tran — Génie mécanique</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=IBM+Plex+Sans:ital,wght@0,300;0,0,400;0,500;1,300&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet"/>
+
+<style>
+:root{
+  --bg:#07090f; --bg2:#0b0f1a; --bg3:#0f1420;
+  --border:#1a2238; --border2:#232f4a;
+  --amber:#f0a500; --amber2:#c4850a;
+  --cyan:#00c8e0; --green:#1fd97a; --red:#ff5b5b;
+  --text:#dde3f0; --sub:#8a9ab8; --muted:#4a5470; --dim:#232f4a;
+
+  --orb:'Orbitron',sans-serif;
+  --plex:'IBM Plex Sans',sans-serif;
+  --mono:'IBM Plex Mono',monospace;
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:var(--plex);
+  font-weight:300;
+  overflow-x:hidden;
+  cursor:none;
+}
+
+/* Cursor OFF on touch devices */
+@media (pointer:coarse){
+  body{cursor:auto}
+  #cd,#cr{display:none !important}
+}
+
+/* Reduced motion: keep aesthetic but reduce animations */
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  #loader{display:none !important}
+  .rv{opacity:1 !important; transform:none !important}
+}
+
+/* ─── CURSOR ─── */
+#cd,#cr{position:fixed;top:0;left:0;pointer-events:none;transform:translate(-50%,-50%)}
+#cd{width:6px;height:6px;background:var(--amber);border-radius:50%;z-index:9999}
+#cr{
+  width:30px;height:30px;border:1px solid rgba(240,165,0,.5);
+  border-radius:50%;z-index:9998;
+  transition:width .3s,height .3s,border-color .3s,opacity .25s;
+}
+#cr.hov{width:44px;height:44px;border-color:rgba(0,200,224,.7)}
+
+/* ─── LOADER ─── */
+#loader{
+  position:fixed;inset:0;background:var(--bg);z-index:10000;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:28px;
+  transition:opacity .6s,visibility .6s
+}
+#loader.out{opacity:0;visibility:hidden}
+.lx{width:64px;height:64px;position:relative}
+.lx::before,.lx::after{content:'';position:absolute;background:var(--amber)}
+.lx::before{width:1px;height:0;top:0;left:50%;animation:lv .45s ease forwards .05s}
+.lx::after{height:1px;width:0;top:50%;left:0;animation:lh .45s ease forwards .4s}
+@keyframes lv{to{height:100%}}
+@keyframes lh{to{width:100%}}
+.lr{position:absolute;inset:0;border:1px solid transparent;border-top-color:var(--cyan);border-radius:50%;opacity:0;animation:lrot .7s ease forwards .8s}
+@keyframes lrot{0%{opacity:1;transform:rotate(0)}100%{opacity:1;transform:rotate(360deg)}}
+.lpct{font-family:var(--mono);font-size:11px;letter-spacing:.3em;color:var(--muted)}
+#ln{color:var(--amber)}
+
+/* ─── PROGRESS ─── */
+#pr{position:fixed;top:0;left:0;height:2px;background:var(--amber);z-index:8000;width:0;box-shadow:0 0 8px var(--amber);transition:width .08s}
+
+/* ─── NOISE ─── */
+body::after{
+  content:'';position:fixed;inset:0;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.03'/%3E%3C/svg%3E");
+  pointer-events:none;z-index:9990;opacity:.5
+}
+
+/* ─── NAV ─── */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:500;
+  padding:26px 64px;display:flex;justify-content:space-between;align-items:center;
+  transition:padding .4s,background .4s,border-color .4s;
+  border-bottom:1px solid transparent
+}
+nav.c{
+  padding:14px 64px;background:rgba(7,9,15,.9);backdrop-filter:blur(20px);
+  border-color:var(--border)
+}
+.nl a{display:flex;align-items:center;gap:12px;text-decoration:none}
+.nd{
+  width:26px;height:26px;border:1px solid var(--amber);
+  transform:rotate(45deg);display:grid;place-items:center;flex-shrink:0;transition:background .2s
+}
+.nd span{font-family:var(--orb);font-size:9px;font-weight:700;color:var(--amber);transform:rotate(-45deg)}
+.nt{font-family:var(--mono);font-size:10px;letter-spacing:.2em;color:var(--muted);text-transform:uppercase}
+nav ul{display:flex;gap:36px;list-style:none}
+nav ul a{
+  font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--muted);text-decoration:none;position:relative;padding-bottom:2px;transition:color .25s
+}
+nav ul a::after{content:'';position:absolute;bottom:0;left:0;width:0;height:1px;background:var(--amber);transition:width .25s}
+nav ul a:hover{color:var(--text)}
+nav ul a:hover::after{width:100%}
+
+/* ─── HERO ─── */
+#hero{min-height:100vh;position:relative;display:flex;align-items:center;padding:0 64px;overflow:hidden}
+#bpc{position:absolute;inset:0;pointer-events:none;opacity:.38}
+
+.hc{position:relative;z-index:2;max-width:820px}
+.heb{display:flex;align-items:center;gap:16px;margin-bottom:26px;opacity:0;animation:fu .6s ease forwards .2s;flex-wrap:wrap}
+.hel{width:32px;height:1px;background:var(--amber)}
+.het{font-family:var(--mono);font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:var(--amber)}
+.hec{margin-left:auto;font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--dim)}
+
+.hn{
+  font-family:var(--orb);
+  font-size:clamp(48px,7.5vw,100px);
+  font-weight:900;line-height:.9;letter-spacing:-.01em;
+  margin-bottom:26px;opacity:0;animation:fu .7s ease forwards .4s
+}
+.hn .g{-webkit-text-stroke:1px var(--dim);color:transparent;display:block}
+.hn .a{color:var(--amber);display:block;font-size:clamp(20px,3vw,40px);font-weight:400;letter-spacing:.1em;margin-top:14px}
+
+.htw{
+  font-family:var(--mono);
+  font-size:13px;color:var(--cyan);letter-spacing:.12em;
+  margin-bottom:44px;min-height:20px;
+  opacity:0;animation:fu .6s ease forwards .8s
+}
+.tc{display:inline-block;width:8px;height:13px;background:var(--cyan);margin-left:2px;vertical-align:text-bottom;animation:bl .9s step-end infinite}
+@keyframes bl{50%{opacity:0}}
+
+.hbt{display:flex;gap:14px;flex-wrap:wrap;opacity:0;animation:fu .6s ease forwards 1s}
+.btn{
+  font-family:var(--mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;
+  padding:15px 28px;text-decoration:none;display:inline-flex;align-items:center;gap:10px;
+  position:relative;overflow:hidden;transition:transform .2s;cursor:none;border:none
+}
+.btn::before{content:'';position:absolute;inset:0;transform:translateX(-102%);transition:transform .35s cubic-bezier(.4,0,.2,1)}
+.btn:hover{transform:translateY(-2px)}
+.btn:hover::before{transform:none}
+.ba{background:var(--amber);color:var(--bg);font-weight:500}
+.ba::before{background:var(--amber2)}
+.bg{background:transparent;color:var(--text);border:1px solid var(--border)}
+.bg::before{background:var(--bg3)}
+
+.hsh{position:absolute;bottom:36px;left:64px;display:flex;align-items:center;gap:10px;opacity:0;animation:fu .5s ease forwards 1.5s}
+.hsl{width:1px;height:44px;background:linear-gradient(to bottom,transparent,var(--muted));animation:sp 2.2s ease-in-out infinite}
+@keyframes sp{0%,100%{opacity:.25}50%{opacity:1}}
+.hst{font-family:var(--mono);font-size:9px;letter-spacing:.25em;text-transform:uppercase;color:var(--dim);writing-mode:vertical-rl}
+
+.hcd{position:absolute;right:64px;bottom:36px;text-align:right;opacity:0;animation:fu .5s ease forwards 1.2s}
+.hcl{font-family:var(--mono);font-size:10px;letter-spacing:.12em;color:var(--dim);margin-bottom:5px}
+.hcl span{color:var(--amber)}
+
+@keyframes fu{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+
+/* ─── DIVIDER ─── */
+.dv{display:flex;align-items:center;padding:0 64px;opacity:.35}
+.dvl{flex:1;height:1px;background:var(--border)}
+.dvg{width:7px;height:7px;background:var(--amber);transform:rotate(45deg);margin:0 18px}
+
+/* ─── SECTIONS ─── */
+section{padding:110px 64px;position:relative}
+.stag{
+  font-family:var(--mono);font-size:9px;letter-spacing:.35em;text-transform:uppercase;
+  color:var(--amber);margin-bottom:14px;display:flex;align-items:center;gap:12px
+}
+.stag::before{content:'';width:18px;height:1px;background:var(--amber)}
+.sh{
+  font-family:var(--orb);font-size:clamp(32px,4.5vw,54px);
+  font-weight:700;line-height:1.05;letter-spacing:.02em;margin-bottom:64px
+}
+.sh em{color:var(--amber);font-style:normal}
+
+/* small "EXEMPLE" pill */
+.ex-pill{
+  display:inline-flex;align-items:center;gap:8px;
+  font-family:var(--mono);font-size:9px;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--amber);
+  border:1px solid rgba(240,165,0,.35);
+  padding:6px 12px;
+  margin-top:14px;
+  background:rgba(240,165,0,.06);
+}
+.ex-pill b{font-weight:500;color:var(--text);letter-spacing:.12em}
+
+/* ─── ABOUT ─── */
+#about{background:var(--bg2)}
+.abg{display:grid;grid-template-columns:5fr 4fr;gap:90px;align-items:start}
+.abt p{font-size:15px;color:var(--sub);line-height:1.95;margin-bottom:18px}
+.abt strong{color:var(--text);font-weight:500}
+.abtags{display:flex;flex-wrap:wrap;gap:7px;margin-top:28px}
+.tag{
+  font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;
+  border:1px solid var(--border);color:var(--muted);padding:5px 12px;transition:border-color .2s,color .2s
+}
+.tag:hover{border-color:var(--amber);color:var(--amber)}
+
+.skp{padding-top:4px}
+.skg{margin-bottom:36px}
+.skgl{
+  font-family:var(--mono);font-size:9px;letter-spacing:.25em;text-transform:uppercase;color:var(--dim);
+  margin-bottom:18px;display:flex;align-items:center;gap:12px
+}
+.skgl::after{content:'';flex:1;height:1px;background:var(--border)}
+.ski{margin-bottom:13px}
+.skr{display:flex;justify-content:space-between;margin-bottom:5px}
+.skn{font-family:var(--mono);font-size:11px;color:var(--text);letter-spacing:.06em}
+.skv{font-family:var(--mono);font-size:10px;color:var(--amber)}
+.skt{height:2px;background:var(--border);position:relative;overflow:hidden}
+.skf{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(90deg,var(--amber),var(--cyan));width:0;transition:width 1.4s cubic-bezier(.4,0,.2,1)}
+
+/* ─── PROJECTS ─── */
+#projects{background:var(--bg)}
+
+.proj-header-row{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:60px;gap:18px;flex-wrap:wrap}
+.proj-header-row .sh{margin-bottom:0}
+.pcount{font-family:var(--orb);font-size:52px;font-weight:300;color:var(--border);line-height:1}
+
+.eng-card{border:1px solid var(--border);background:var(--bg2);margin-bottom:3px;position:relative;overflow:hidden;transition:border-color .3s}
+.eng-card:hover{border-color:var(--border2)}
+
+.eng-titleblock{display:flex;align-items:stretch;border-bottom:1px solid var(--border);background:var(--bg3)}
+.etb-main{flex:1;padding:18px 28px;border-right:1px solid var(--border)}
+.etb-rev{display:flex;flex-direction:column;justify-content:center;align-items:center;padding:10px 28px;border-right:1px solid var(--border);min-width:90px}
+.etb-status{display:flex;flex-direction:column;justify-content:center;align-items:center;padding:10px 28px;min-width:120px}
+.etb-num{font-family:var(--mono);font-size:9px;letter-spacing:.2em;color:var(--muted);text-transform:uppercase;margin-bottom:4px}
+.etb-title{font-family:var(--orb);font-size:clamp(15px,1.8vw,22px);font-weight:700;letter-spacing:.04em;color:var(--text)}
+.etb-sub{font-family:var(--mono);font-size:10px;letter-spacing:.12em;color:var(--cyan);margin-top:4px}
+.etb-rlabel{font-family:var(--mono);font-size:9px;letter-spacing:.18em;color:var(--muted);text-transform:uppercase;margin-bottom:3px}
+.etb-rval{font-family:var(--orb);font-size:18px;font-weight:700;color:var(--amber)}
+.etb-slabel{font-family:var(--mono);font-size:9px;letter-spacing:.15em;color:var(--muted);text-transform:uppercase;margin-bottom:6px}
+.status-badge{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;padding:5px 10px;border:1px solid}
+.status-done{border-color:var(--green);color:var(--green)}
+.status-wip{border-color:var(--amber);color:var(--amber)}
+.status-note{border-color:rgba(255,255,255,.18);color:rgba(255,255,255,.7)}
+.sdot{width:5px;height:5px;border-radius:50%;animation:pd 2s ease infinite}
+.sdot-g{background:var(--green)}
+.sdot-a{background:var(--amber)}
+.sdot-n{background:rgba(255,255,255,.45)}
+@keyframes pd{0%,100%{opacity:1}50%{opacity:.3}}
+
+.eng-body{display:grid;grid-template-columns:1fr 340px;gap:0}
+.eng-left{padding:32px 28px;border-right:1px solid var(--border)}
+.eng-right{padding:24px;display:flex;flex-direction:column;gap:20px}
+
+.eng-desc{font-size:14px;color:var(--sub);line-height:1.9;margin-bottom:14px}
+.eng-example{
+  margin: 0 0 24px;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: rgba(240,165,0,.8);
+  border: 1px solid rgba(240,165,0,.25);
+  background: rgba(240,165,0,.06);
+  padding: 10px 12px;
+}
+
+/* Spec table */
+.spec-table{width:100%;border-collapse:collapse;margin-bottom:24px}
+.spec-table tr{border-bottom:1px solid var(--border)}
+.spec-table tr:last-child{border-bottom:none}
+.spec-table td{padding:8px 0;font-family:var(--mono);font-size:11px}
+.spec-table td:first-child{color:var(--muted);letter-spacing:.12em;text-transform:uppercase;width:140px;padding-right:16px}
+.spec-table td:last-child{color:var(--text)}
+.spec-table .highlight{color:var(--amber)}
+
+.eng-tools{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:24px}
+.etool{font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;border:1px solid var(--border);color:var(--dim);padding:4px 10px}
+
+.eng-highlights{display:flex;flex-direction:column;gap:7px}
+.ehl{font-family:var(--mono);font-size:11px;color:var(--muted);display:flex;align-items:baseline;gap:10px}
+.ehl::before{content:'→';color:var(--amber);flex-shrink:0}
+
+/* SVG drawing panel */
+.eng-drawing{
+  background:var(--bg);
+  border:1px solid var(--border);
+  padding:16px;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  position:relative;overflow:hidden;
+  min-height:200px;
+}
+.drawing-label{font-family:var(--mono);font-size:8px;letter-spacing:.18em;text-transform:uppercase;color:var(--dim);text-align:center;margin-top:8px}
+
+/* Metrics row */
+.eng-metrics{display:flex;gap:0;border-top:1px solid var(--border);flex-wrap:wrap}
+.em-item{flex:1;padding:16px 20px;border-right:1px solid var(--border);text-align:center;min-width:180px}
+.em-item:last-child{border-right:none}
+.em-val{font-family:var(--orb);font-size:22px;font-weight:700;color:var(--amber);line-height:1;margin-bottom:4px}
+.em-lbl{font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+
+/* ─── PLACEHOLDER PROJECTS ─── */
+.placeholder-grid{display:grid;grid-template-columns:1fr 1fr;gap:3px;margin-top:3px}
+.ph-card{
+  border:1px dashed var(--border);
+  background:var(--bg2);
+  padding:40px;
+  position:relative;
+  overflow:hidden;
+  min-height:200px;
+  display:flex;flex-direction:column;justify-content:space-between;
+}
+.ph-card::before{
+  content:'';position:absolute;inset:0;
+  background:repeating-linear-gradient(-45deg,transparent,transparent 18px,rgba(26,34,56,.35) 18px,rgba(26,34,56,.35) 19px);
+}
+.ph-inner{position:relative;z-index:1}
+.ph-lock{width:40px;height:40px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;margin-bottom:20px}
+.ph-tag{font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--dim);margin-bottom:10px}
+.ph-title{font-family:var(--orb);font-size:18px;font-weight:700;color:var(--dim);letter-spacing:.04em;margin-bottom:10px}
+.ph-desc{font-size:13px;color:var(--dim);line-height:1.7}
+.ph-foot{position:relative;z-index:1;font-family:var(--mono);font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--dim);display:flex;align-items:center;gap:10px}
+.ph-foot::before{content:'';flex:1;height:1px;background:var(--border)}
+
+/* ─── EMPTY SECTIONS ─── */
+.empty-section{background:var(--bg2);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.empty-inner{
+  border:1px dashed var(--border2);
+  padding:72px 48px;
+  text-align:center;
+  position:relative;overflow:hidden
+}
+.empty-inner::before{
+  content:'';position:absolute;inset:0;
+  background:repeating-linear-gradient(-45deg,transparent,transparent 24px,rgba(26,34,56,.25) 24px,rgba(26,34,56,.25) 25px);
+}
+.empty-icon{width:56px;height:56px;border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;margin:0 auto 24px;position:relative;z-index:1}
+.empty-label{font-family:var(--mono);font-size:9px;letter-spacing:.3em;text-transform:uppercase;color:var(--amber);margin-bottom:12px;position:relative;z-index:1}
+.empty-title{font-family:var(--orb);font-size:clamp(24px,3vw,38px);font-weight:700;color:var(--dim);letter-spacing:.04em;margin-bottom:14px;position:relative;z-index:1}
+.empty-sub{font-family:var(--mono);font-size:11px;letter-spacing:.12em;color:var(--dim);position:relative;z-index:1;line-height:1.8}
+.empty-dots{display:flex;justify-content:center;gap:6px;margin-top:28px;position:relative;z-index:1}
+.empty-dots span{width:4px;height:4px;background:var(--border2);border-radius:50%;animation:dotpulse 1.4s ease-in-out infinite}
+.empty-dots span:nth-child(2){animation-delay:.2s}
+.empty-dots span:nth-child(3){animation-delay:.4s}
+@keyframes dotpulse{0%,100%{opacity:.3;transform:scale(1)}50%{opacity:1;transform:scale(1.5)}}
+
+/* Grid of empty sections */
+.empty-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px}
+.empty-card{
+  background:var(--bg2);
+  border:1px dashed var(--border);
+  padding:36px 28px;
+  position:relative;overflow:hidden;
+  min-height:220px;
+  display:flex;flex-direction:column;justify-content:space-between;
+}
+.empty-card::before{
+  content:'';position:absolute;inset:0;
+  background:repeating-linear-gradient(-45deg,transparent,transparent 16px,rgba(26,34,56,.3) 16px,rgba(26,34,56,.3) 17px);
+}
+.ec-inner{position:relative;z-index:1}
+.ec-num{font-family:var(--orb);font-size:44px;font-weight:900;color:var(--border);line-height:1;margin-bottom:12px}
+.ec-tag{font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--dim);margin-bottom:8px}
+.ec-title{font-family:var(--orb);font-size:16px;font-weight:700;color:var(--dim);letter-spacing:.03em;margin-bottom:8px}
+.ec-foot{position:relative;z-index:1;font-family:var(--mono);font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--dim);display:flex;align-items:center;gap:8px;margin-top:auto;padding-top:16px;border-top:1px dashed var(--border)}
+
+/* ─── EXPERIENCE ─── */
+#experience{background:var(--bg2)}
+.exl{display:grid;grid-template-columns:200px 1fr;gap:72px}
+.exsb{position:sticky;top:110px;align-self:start}
+.exni{
+  display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border);
+  transition:border-color .2s;cursor:none
+}
+.exni.act{border-color:var(--amber)}
+.exnd{width:6px;height:6px;border:1px solid var(--muted);transform:rotate(45deg);flex-shrink:0;transition:background .2s,border-color .2s}
+.exni.act .exnd{background:var(--amber);border-color:var(--amber)}
+.exnt{font-family:var(--mono);font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);transition:color .2s}
+.exni.act .exnt{color:var(--text)}
+
+.exlist{display:flex;flex-direction:column;gap:52px}
+.exi{padding-left:28px;border-left:1px solid var(--border);position:relative}
+.exi::before{content:'';position:absolute;left:-4px;top:8px;width:7px;height:7px;border:1px solid var(--amber);background:var(--bg2);transform:rotate(45deg)}
+.exdate{font-family:var(--mono);font-size:9px;letter-spacing:.22em;color:var(--amber);text-transform:uppercase;margin-bottom:8px}
+.exrole{font-family:var(--orb);font-size:19px;font-weight:700;letter-spacing:.04em;color:var(--text);margin-bottom:4px}
+.exorg{font-family:var(--mono);font-size:11px;letter-spacing:.12em;color:var(--muted);margin-bottom:16px}
+.exbody{font-size:13px;color:var(--sub);line-height:1.9;margin-bottom:14px}
+.exhls{display:flex;flex-direction:column;gap:6px}
+.exhl{font-family:var(--mono);font-size:11px;color:var(--muted);display:flex;align-items:baseline;gap:10px}
+.exhl::before{content:'→';color:var(--amber);flex-shrink:0}
+
+/* ─── CONTACT ─── */
+#contact{min-height:75vh;display:flex;align-items:center;justify-content:center;text-align:center;position:relative;overflow:hidden}
+.ctbg{
+  position:absolute;bottom:-24px;left:50%;transform:translateX(-50%);
+  font-family:var(--orb);font-size:clamp(60px,12vw,170px);
+  font-weight:900;color:transparent;-webkit-text-stroke:1px var(--border);
+  white-space:nowrap;pointer-events:none;letter-spacing:.04em
+}
+.ctc{position:relative;z-index:2;padding:0 24px}
+.ctbadge{
+  display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);
+  font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);
+  border:1px solid var(--border);padding:8px 18px;margin-bottom:44px
+}
+.cth{font-family:var(--orb);font-size:clamp(34px,5.5vw,72px);font-weight:900;line-height:.95;margin-bottom:40px;letter-spacing:.02em}
+.cth span{color:var(--amber)}
+.ctemail{
+  display:inline-block;font-family:var(--mono);font-size:clamp(13px,1.8vw,19px);
+  letter-spacing:.08em;color:var(--text);text-decoration:none;border-bottom:1px solid var(--dim);
+  padding-bottom:6px;margin-bottom:26px;transition:color .25s,border-color .25s
+}
+.ctemail:hover{color:var(--amber);border-color:var(--amber)}
+.ctnote{
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--dim);
+  margin-bottom: 52px;
+}
+.ctsoc{display:flex;gap:28px;justify-content:center;flex-wrap:wrap}
+.csoc{
+  font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);
+  text-decoration:none;display:flex;align-items:center;gap:8px;transition:color .2s
+}
+.csoc:hover{color:var(--amber)}
+
+/* ─── FOOTER ─── */
+footer{padding:20px 64px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+footer span{font-family:var(--mono);font-size:9px;letter-spacing:.18em;color:var(--dim);text-transform:uppercase}
+.fa{color:var(--amber)}
+
+/* ─── REVEAL ─── */
+.rv{opacity:0;transform:translateY(24px);transition:opacity .7s ease,transform .7s ease}
+.rv.in{opacity:1;transform:none}
+.d1{transition-delay:.1s}.d2{transition-delay:.2s}.d3{transition-delay:.3s}.d4{transition-delay:.4s}
+
+/* ─── RESPONSIVE ─── */
+@media(max-width:960px){
+  nav,nav.c,footer{padding-left:24px;padding-right:24px}
+  nav ul{display:none}
+  #hero,section,.dv{padding-left:24px;padding-right:24px}
+  .hsh{left:24px}.hcd{right:24px}
+  .abg,.exl{grid-template-columns:1fr;gap:48px}
+  .eng-body{grid-template-columns:1fr}
+  .eng-left{border-right:none}
+  .eng-right{border-top:1px solid var(--border)}
+  .placeholder-grid,.empty-grid{grid-template-columns:1fr}
+  .hn{font-size:46px}
+}
+
+/* Quick selection highlight (nice touch) */
+::selection{background:rgba(240,165,0,.22);color:var(--text)}
+</style>
+</head>
+
+<body>
+
+<div id="pr"></div>
+<div id="cd"></div>
+<div id="cr"></div>
+
+<!-- LOADER -->
+<div id="loader" aria-hidden="true">
+  <div class="lx"><div class="lr"></div></div>
+  <div class="lpct"><span id="ln">00</span> %</div>
+</div>
+
+<!-- NAV -->
+<nav id="nv">
+  <div class="nl">
+    <a href="#hero" aria-label="Retour au haut de page">
+      <div class="nd"><span>VT</span></div>
+      <span class="nt">Labrecque-Tran</span>
+    </a>
+  </div>
+  <ul>
+    <li><a href="#about">À propos</a></li>
+    <li><a href="#projects">Projets</a></li>
+    <li><a href="#experience">Parcours</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- ═══════════════ HERO ═══════════════ -->
+<section id="hero">
+  <canvas id="bpc"></canvas>
+
+  <div class="hc">
+    <div class="heb">
+      <div class="hel"></div>
+      <span class="het">Étudiant · Génie mécanique</span>
+
+      <!-- NOTE: ce badge est réel (Esteban) selon ton CV, mais tu peux le changer si besoin -->
+      <span style="font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--dim);border:1px solid var(--dim);padding:3px 10px;margin-left:12px">
+        Soc. tech. Esteban
+      </span>
+
+      <!-- Garder le style "coordonnées" mais sans affirmer quelque chose de faux -->
+      <span class="hec">Montréal, QC</span>
+    </div>
+
+    <h1 class="hn">
+      Vincent<br>
+      <span class="g">Labrecque</span>
+      <span class="a">— Tran</span>
+    </h1>
+
+    <div class="htw"><span id="tw"></span><span class="tc"></span></div>
+
+    <div class="hbt">
+      <a href="#projects" class="btn ba">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        Voir les projets
+      </a>
+      <!-- Mets ton fichier CV en /cv.pdf (racine) ou change le lien -->
+      <a href="cv.pdf" class="btn bg" download>
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Télécharger CV
+      </a>
+    </div>
+
+    <div class="ex-pill">
+      <b>NOTE</b> : Les % / chiffres / dimensions ci-dessous sont des <b>EXEMPLES</b> à remplacer.
+    </div>
+  </div>
+
+  <div class="hsh"><div class="hsl"></div><span class="hst">Défiler</span></div>
+
+  <div class="hcd">
+    <div class="hcl">ÉCOLE · <span>POLYTECHNIQUE MONTRÉAL</span></div>
+    <div class="hcl">SOCIÉTÉ · <span>ESTEBAN</span></div>
+    <div class="hcl">CAO · <span>CATIA / SOLIDWORKS / AUTOCAD</span></div>
+    <div class="hcl">DISPO · <span>À PRÉCISER</span></div>
+  </div>
+</section>
+
+<div class="dv"><div class="dvl"></div><div class="dvg"></div><div class="dvl"></div></div>
+
+<!-- ═══════════════ ABOUT ═══════════════ -->
+<section id="about">
+  <div class="stag rv">01 · Profil</div>
+
+  <div class="abg">
+    <div class="abt">
+      <h2 class="sh rv">Ingénieur<br>en <em>devenir</em></h2>
+
+      <!-- Texte rendu plus "safe" : on ne sur-vend pas; on annonce ce qui est en cours -->
+      <p class="rv d1">
+        Je suis <strong>Vincent Labrecque-Tran</strong>, étudiant en <strong>2e année</strong> en génie mécanique à
+        <strong>Polytechnique Montréal</strong> et membre de la société technique <strong>Esteban</strong>. :contentReference[oaicite:1]{index=1}
+      </p>
+
+      <p class="rv d2">
+        J’aime la <strong>conception CAO</strong> et le travail “ingénierie concrète” : contraintes d’assemblage, dégagements, interfaces,
+        et documentation propre. Je construis progressivement un portfolio basé sur des projets d’école et de société technique (CAO + intégration).
+      </p>
+
+      <p class="rv d3">
+        <strong>Important :</strong> les éléments “impressionnants” ci-dessous (pourcentages, dimensions, matériaux, performances) sont des
+        <strong>EXEMPLES</strong> pour te montrer le look. Tu les remplaces par tes vraies données au fur et à mesure.
+      </p>
+
+      <div class="abtags rv d4">
+        <span class="tag">CATIA V5</span>
+        <span class="tag">CATIA 3DExperience</span>
+        <span class="tag">SolidWorks</span>
+        <span class="tag">AutoCAD</span>
+        <span class="tag">Python</span>
+        <span class="tag">Suite Office</span>
+        <span class="tag">Documentation</span>
+        <span class="tag">Assemblage</span>
+        <span class="tag">Projets d’équipe</span>
+        <span class="tag">Bilingue FR/EN</span>
+      </div>
+    </div>
+
+    <!-- Skill panel: keep, but mark as example -->
+    <div class="skp rv d2">
+      <div class="skg">
+        <div class="skgl">CAO 3D <span style="margin-left:10px;color:rgba(240,165,0,.8)">(EXEMPLE)</span></div>
+
+        <div class="ski">
+          <div class="skr"><span class="skn">CATIA 3DExperience</span><span class="skv">82%*</span></div>
+          <div class="skt"><div class="skf" data-w="82%"></div></div>
+        </div>
+
+        <div class="ski">
+          <div class="skr"><span class="skn">CATIA V5</span><span class="skv">78%*</span></div>
+          <div class="skt"><div class="skf" data-w="78%"></div></div>
+        </div>
+
+        <div class="ski">
+          <div class="skr"><span class="skn">SolidWorks</span><span class="skv">88%*</span></div>
+          <div class="skt"><div class="skf" data-w="88%"></div></div>
+        </div>
+
+        <div class="ski">
+          <div class="skr"><span class="skn">AutoCAD</span><span class="skv">68%*</span></div>
+          <div class="skt"><div class="skf" data-w="68%"></div></div>
+        </div>
+      </div>
+
+      <div class="skg">
+        <div class="skgl">Programmation <span style="margin-left:10px;color:rgba(240,165,0,.8)">(EXEMPLE)</span></div>
+
+        <div class="ski">
+          <div class="skr"><span class="skn">Python</span><span class="skv">70%*</span></div>
+          <div class="skt"><div class="skf" data-w="70%"></div></div>
+        </div>
+
+        <div class="ski">
+          <div class="skr"><span class="skn">VBA (Excel / Office)</span><span class="skv">65%*</span></div>
+          <div class="skt"><div class="skf" data-w="65%"></div></div>
+        </div>
+      </div>
+
+      <div style="font-family:var(--mono);font-size:10px;letter-spacing:.12em;color:var(--dim);margin-top:18px;line-height:1.8">
+        * EXEMPLE : remplace par ta propre échelle (ou enlève les % si tu préfères).
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SOFTWARE STACK FULL TABLE ── -->
+  <div style="margin-top:64px;padding-top:40px;border-top:1px solid var(--border)" class="rv">
+    <div style="font-family:var(--mono);font-size:9px;letter-spacing:.3em;text-transform:uppercase;color:var(--dim);margin-bottom:28px;display:flex;align-items:center;gap:14px">
+      <span style="width:18px;height:1px;background:var(--dim);flex-shrink:0;display:inline-block"></span>
+      Stack logiciel (mix réel + exemples)
+      <span style="flex:1;height:1px;background:var(--border);display:inline-block"></span>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:2px">
+      <div style="background:var(--bg3);border:1px solid var(--border);padding:18px 20px">
+        <div style="font-family:var(--mono);font-size:8px;letter-spacing:.22em;color:var(--amber);text-transform:uppercase;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--border)">CAO 3D</div>
+        <div style="font-family:var(--mono);font-size:11px;color:var(--sub);line-height:2.1">
+          <span style="color:var(--text)">CATIA 3DExperience</span><br>
+          <span style="color:var(--text)">CATIA V5</span><br>
+          <span style="color:var(--text)">SolidWorks</span><br>
+          <span style="color:var(--text)">AutoCAD</span><br>
+          <span style="color:var(--dim)">(ex.) Fusion 360</span>
+        </div>
+      </div>
+
+      <div style="background:var(--bg3);border:1px solid var(--border);padding:18px 20px">
+        <div style="font-family:var(--mono);font-size:8px;letter-spacing:.22em;color:var(--cyan);text-transform:uppercase;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--border)">Calcul & Simulation</div>
+        <div style="font-family:var(--mono);font-size:11px;color:var(--sub);line-height:2.1">
+          <span style="color:var(--dim)">(ex.) ANSYS Mechanical</span><br>
+          <span style="color:var(--dim)">(ex.) Simcenter</span><br>
+          <span style="color:var(--dim)">(ex.) MATLAB</span><br>
+          <span style="color:var(--dim)">—</span><br>
+          <span style="color:var(--dim)">—</span>
+        </div>
+      </div>
+
+      <div style="background:var(--bg3);border:1px solid var(--border);padding:18px 20px">
+        <div style="font-family:var(--mono);font-size:8px;letter-spacing:.22em;color:var(--green);text-transform:uppercase;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--border)">Programmation</div>
+        <div style="font-family:var(--mono);font-size:11px;color:var(--sub);line-height:2.1">
+          <span style="color:var(--text)">Python</span><br>
+          <span style="color:var(--dim)">(ex.) Scripts CAO / automatisation</span><br>
+          <span style="color:var(--dim)">—</span><br>
+          <span style="color:var(--dim)">—</span><br>
+          <span style="color:var(--dim)">—</span>
+        </div>
+      </div>
+
+      <div style="background:var(--bg3);border:1px solid var(--border);padding:18px 20px">
+        <div style="font-family:var(--mono);font-size:8px;letter-spacing:.22em;color:var(--muted);text-transform:uppercase;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--border)">Langues & Autres</div>
+        <div style="font-family:var(--mono);font-size:11px;line-height:2.1">
+          <span style="color:var(--amber)">FR</span>&nbsp;<span style="color:var(--text)">Natif</span><br>
+          <span style="color:var(--amber)">EN</span>&nbsp;<span style="color:var(--text)">Fonctionnel</span><br>
+          <span style="color:var(--text)">Suite Office</span><br>
+          <span style="color:var(--dim)">(ex.) Git</span><br>
+          <span style="color:var(--dim)">(ex.) LaTeX</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="dv"><div class="dvl"></div><div class="dvg"></div><div class="dvl"></div></div>
+
+<!-- ═══════════════ PROJECTS ═══════════════ -->
+<section id="projects">
+  <div class="proj-header-row rv">
+    <div>
+      <div class="stag">02 · Projets</div>
+      <h2 class="sh" style="margin-bottom:0">Conception &<br><em>Intégration</em></h2>
+    </div>
+    <div class="pcount">04</div>
+  </div>
+
+  <!-- ── PROJECT 1 : BOÎTIER DCU ── -->
+  <div class="eng-card rv">
+    <div class="eng-titleblock">
+      <div class="etb-main">
+        <div class="etb-num">PROJ-001 · Boîtier électronique</div>
+        <div class="etb-title">Boîtier DCU — Data Control Unit</div>
+        <div class="etb-sub">Enclos mécanique pour carte électronique embarquée · 1 PCB</div>
+      </div>
+      <div class="etb-rev">
+        <div class="etb-rlabel">Rév.</div>
+        <div class="etb-rval">A</div>
+      </div>
+      <div class="etb-status">
+        <div class="etb-slabel">Statut</div>
+        <div class="status-badge status-wip">
+          <span class="sdot sdot-a"></span>Texte à personnaliser
+        </div>
+      </div>
+    </div>
+
+    <div class="eng-body">
+      <div class="eng-left">
+        <div class="eng-example">EXEMPLE — remplace la description + specs par tes vraies données (matériau, dimensions, etc.)</div>
+
+        <p class="eng-desc">
+          Conception d’un boîtier sur mesure pour protéger et intégrer une carte (DCU) en contexte embarqué.
+          La conception vise une intégration propre (points de fixation, passages, accessibilité) et une documentation claire.
+        </p>
+
+        <table class="spec-table">
+          <tr><td>Contenu</td><td class="highlight">1 × PCB — DCU (EXEMPLE)</td></tr>
+          <tr><td>Matériau</td><td>EXEMPLE — Aluminium / ABS / PETG</td></tr>
+          <tr><td>Dimensions</td><td>EXEMPLE — L × l × H (mm)</td></tr>
+          <tr><td>Fixation PCB</td><td>EXEMPLE — entretoises + vis M3</td></tr>
+          <tr><td>Connecteurs</td><td>EXEMPLE — passages usinés / inserts</td></tr>
+          <tr><td>Fabrication</td><td>EXEMPLE — impression 3D / usinage</td></tr>
+          <tr><td>Logiciel</td><td>SolidWorks / CATIA (selon ton cas)</td></tr>
+        </table>
+
+        <div class="eng-tools">
+          <span class="etool">CATIA 3DExperience</span>
+          <span class="etool">CATIA V5</span>
+          <span class="etool">SolidWorks</span>
+          <span class="etool">(ex.) GD&T</span>
+          <span class="etool">(ex.) Inserts</span>
+        </div>
+
+        <div class="eng-highlights">
+          <span class="ehl">Accès facilité à la connectique sans démontage complet (EXEMPLE)</span>
+          <span class="ehl">Tolérances prises en compte pour assurer l’assemblage (EXEMPLE)</span>
+          <span class="ehl">Points de montage clairs + documentation d’interface (EXEMPLE)</span>
+          <span class="ehl">Checklist de validation : interférences, dégagements, montage (EXEMPLE)</span>
+        </div>
+      </div>
+
+      <div class="eng-right">
+        <div class="eng-drawing">
+          <!-- Tu peux garder tes SVG : ils font très pro -->
+          <!-- (Je garde celui que tu avais, inchangé visuellement) -->
+          <svg viewBox="0 0 280 200" width="100%" xmlns="http://www.w3.org/2000/svg" style="max-width:280px">
+            <defs>
+              <pattern id="g1" width="14" height="14" patternUnits="userSpaceOnUse">
+                <path d="M14 0H0V14" fill="none" stroke="#111828" stroke-width=".4"/>
+              </pattern>
+              <pattern id="g2" width="56" height="56" patternUnits="userSpaceOnUse">
+                <rect width="56" height="56" fill="url(#g1)"/>
+                <path d="M56 0H0V56" fill="none" stroke="#182038" stroke-width=".8"/>
+              </pattern>
+            </defs>
+            <rect width="280" height="200" fill="url(#g2)"/>
+            <ellipse cx="155" cy="175" rx="80" ry="8" fill="#000" opacity=".25"/>
+            <polygon points="75,48 110,94 110,148 75,102" fill="#0a0f1c" stroke="#f0a500" stroke-width="1"/>
+            <polygon points="195,24 230,70 230,124 195,78" fill="#0c1220" stroke="#f0a500" stroke-width="1"/>
+            <polygon points="75,48 195,24 230,70 110,94" fill="#101828" stroke="#f0a500" stroke-width="1.5"/>
+            <polygon points="86,54 188,32 218,69 116,91" fill="#052210" stroke="#1fd97a" stroke-width=".8" opacity=".7"/>
+            <rect x="130" y="50" width="22" height="18" rx="1" fill="#0a3020" stroke="#1fd97a" stroke-width=".6" opacity=".8"/>
+            <text x="141" y="62" font-family="IBM Plex Mono" font-size="5" fill="#1fd97a" text-anchor="middle" opacity=".7">DCU</text>
+            <rect x="202" y="58" width="18" height="24" rx="1" fill="#050810" stroke="#00c8e0" stroke-width=".8"/>
+            <rect x="0" y="183" width="280" height="17" fill="#080d18" opacity=".8"/>
+            <text x="8" y="194" font-family="IBM Plex Mono" font-size="7.5" fill="#2a3050">BOÎTIER-DCU · REV A · EXEMPLE</text>
+            <text x="272" y="194" font-family="IBM Plex Mono" font-size="7.5" fill="#2a3050" text-anchor="end">VUE ISO</text>
+          </svg>
+          <div class="drawing-label">Vue isométrique — Boîtier DCU (illustration)</div>
+        </div>
+
+        <div style="background:var(--bg3);border:1px solid var(--border);padding:16px 20px">
+          <div style="font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:10px">Composition</div>
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+            <div style="width:10px;height:10px;background:#052210;border:1px solid #1fd97a;flex-shrink:0"></div>
+            <span style="font-family:var(--mono);font-size:11px;color:var(--text)">1 × PCB — DCU (EXEMPLE)</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:10px;height:10px;background:#00c8e0;opacity:.35"></div>
+            <span style="font-family:var(--mono);font-size:11px;color:var(--muted)">Connecteur(s) / câblage (EXEMPLE)</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="eng-metrics">
+      <div class="em-item"><div class="em-val">1</div><div class="em-lbl">PCB intégré</div></div>
+      <div class="em-item"><div class="em-val">4</div><div class="em-lbl">Points montage (ex.)</div></div>
+      <div class="em-item"><div class="em-val">REV A</div><div class="em-lbl">Révision</div></div>
+      <div class="em-item"><div class="em-val">CAO</div><div class="em-lbl">Outil (ex.)</div></div>
+    </div>
+  </div>
+
+  <!-- ── PROJECT 2 : BOÎTIER POWER + AUX + FLASHERS ── -->
+  <div class="eng-card rv d1">
+    <div class="eng-titleblock">
+      <div class="etb-main">
+        <div class="etb-num">PROJ-002 · Boîtier électronique</div>
+        <div class="etb-title">Boîtier Power & Aux + Flashers</div>
+        <div class="etb-sub">Enclos mécanique pour double carte électronique embarquée · 2 PCBs</div>
+      </div>
+      <div class="etb-rev">
+        <div class="etb-rlabel">Rév.</div>
+        <div class="etb-rval">A</div>
+      </div>
+      <div class="etb-status">
+        <div class="etb-slabel">Statut</div>
+        <div class="status-badge status-wip">
+          <span class="sdot sdot-a"></span>Texte à personnaliser
+        </div>
+      </div>
+    </div>
+
+    <div class="eng-body">
+      <div class="eng-left">
+        <div class="eng-example">EXEMPLE — garde le design, remplace les specs + le texte par tes vrais détails</div>
+
+        <p class="eng-desc">
+          Boîtier compact pour deux cartes électroniques : une carte “Power” et une carte “Aux + Flashers”.
+          Objectif : organiser l’intégration (espace, câblage, accès), et rendre l’assemblage maintenable.
+        </p>
+
+        <table class="spec-table">
+          <tr><td>Contenu</td><td class="highlight">2 × PCBs — Power · Aux + Flashers (EXEMPLE)</td></tr>
+          <tr><td>Matériau</td><td>EXEMPLE — aluminium / polymère</td></tr>
+          <tr><td>Dimensions</td><td>EXEMPLE — L × l × H (mm)</td></tr>
+          <tr><td>Séparation</td><td>EXEMPLE — cloison interne</td></tr>
+          <tr><td>Connecteurs</td><td>EXEMPLE — deux faces d’accès</td></tr>
+          <tr><td>Fixation</td><td>EXEMPLE — points de montage</td></tr>
+          <tr><td>Fabrication</td><td>EXEMPLE — impression 3D / usinage</td></tr>
+        </table>
+
+        <div class="eng-tools">
+          <span class="etool">CATIA 3DExperience</span>
+          <span class="etool">SolidWorks</span>
+          <span class="etool">(ex.) Inserts / entretoises</span>
+          <span class="etool">(ex.) Routing câbles</span>
+          <span class="etool">(ex.) Maintenance</span>
+        </div>
+
+        <div class="eng-highlights">
+          <span class="ehl">Cloison interne pour structurer l’intégration (EXEMPLE)</span>
+          <span class="ehl">Guides de cartes / accès rapide (EXEMPLE)</span>
+          <span class="ehl">Gestion des dégagements connecteurs/panneaux (EXEMPLE)</span>
+          <span class="ehl">Checklist validation : montage, accès, câblage (EXEMPLE)</span>
+        </div>
+      </div>
+
+      <div class="eng-right">
+        <div class="eng-drawing">
+          <!-- Garde ton SVG (style pro). -->
+          <svg viewBox="0 0 300 210" width="100%" xmlns="http://www.w3.org/2000/svg" style="max-width:300px">
+            <defs>
+              <pattern id="g3" width="14" height="14" patternUnits="userSpaceOnUse">
+                <path d="M14 0H0V14" fill="none" stroke="#111828" stroke-width=".4"/>
+              </pattern>
+              <pattern id="g4" width="56" height="56" patternUnits="userSpaceOnUse">
+                <rect width="56" height="56" fill="url(#g3)"/>
+                <path d="M56 0H0V56" fill="none" stroke="#182038" stroke-width=".8"/>
+              </pattern>
+            </defs>
+            <rect width="300" height="210" fill="url(#g4)"/>
+            <ellipse cx="160" cy="188" rx="100" ry="9" fill="#000" opacity=".3"/>
+            <polygon points="55,50 95,104 95,169 55,115" fill="#080c18" stroke="#f0a500" stroke-width="1"/>
+            <polygon points="215,22 255,76 255,141 215,87" fill="#0c1220" stroke="#f0a500" stroke-width="1"/>
+            <polygon points="55,50 215,22 255,76 95,104" fill="#101828" stroke="#f0a500" stroke-width="1.5"/>
+            <polygon points="65,56 132,38 168,82 101,100" fill="#1a0a00" stroke="#f0a500" stroke-width=".7" opacity=".75"/>
+            <polygon points="138,36 208,26 242,72 172,82" fill="#001a1a" stroke="#00c8e0" stroke-width=".7" opacity=".75"/>
+            <rect x="0" y="193" width="300" height="17" fill="#080d18" opacity=".8"/>
+            <text x="8" y="204" font-family="IBM Plex Mono" font-size="7.5" fill="#2a3050">BOÎTIER-PWR-AUX · REV A · EXEMPLE</text>
+            <text x="292" y="204" font-family="IBM Plex Mono" font-size="7.5" fill="#2a3050" text-anchor="end">VUE ISO</text>
+          </svg>
+          <div class="drawing-label">Vue isométrique — 2 PCBs (illustration)</div>
+        </div>
+
+        <div style="background:var(--bg3);border:1px solid var(--border);padding:16px 20px">
+          <div style="font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:12px">Composition</div>
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+            <div style="width:10px;height:10px;background:#1a0a00;border:1px solid #f0a500;flex-shrink:0"></div>
+            <span style="font-family:var(--mono);font-size:11px;color:var(--text)">PCB 1 — Power (ex.)</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+            <div style="width:10px;height:10px;background:#001a1a;border:1px solid #00c8e0;flex-shrink:0"></div>
+            <span style="font-family:var(--mono);font-size:11px;color:var(--text)">PCB 2 — Aux + Flashers (ex.)</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="width:10px;height:2px;background:var(--amber);opacity:.5"></div>
+            <span style="font-family:var(--mono);font-size:11px;color:var(--muted)">Cloison interne (ex.)</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="eng-metrics">
+      <div class="em-item"><div class="em-val">2</div><div class="em-lbl">PCBs intégrés</div></div>
+      <div class="em-item"><div class="em-val">1</div><div class="em-lbl">Cloison (ex.)</div></div>
+      <div class="em-item"><div class="em-val">2</div><div class="em-lbl">Faces (ex.)</div></div>
+      <div class="em-item"><div class="em-val">REV A</div><div class="em-lbl">Révision</div></div>
+    </div>
+  </div>
+
+  <!-- ── PLACEHOLDER PROJECTS ── -->
+  <div class="placeholder-grid" style="margin-top:3px">
+    <div class="ph-card rv d2">
+      <div class="ph-inner">
+        <div class="ph-lock">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2a3050" stroke-width="1.5">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+          </svg>
+        </div>
+        <div class="ph-tag">PROJ-003 · EXEMPLE</div>
+        <div class="ph-title">Projet à venir<br>de conception</div>
+        <div class="ph-desc">Ajoute ici ton prochain projet (cours, labo ou club). Mets 1 image + 1 chiffre.</div>
+      </div>
+      <div class="ph-foot">À venir</div>
+    </div>
+
+    <div class="ph-card rv d3">
+      <div class="ph-inner">
+        <div class="ph-lock">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2a3050" stroke-width="1.5">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+          </svg>
+        </div>
+        <div class="ph-tag">PROJ-004 · EXEMPLE</div>
+        <div class="ph-title">Projet à venir<br>de validation</div>
+        <div class="ph-desc">Exemple : mini test, protocole simple, résultats, leçon apprise.</div>
+      </div>
+      <div class="ph-foot">À venir</div>
+    </div>
+  </div>
+</section>
+
+<div class="dv"><div class="dvl"></div><div class="dvg"></div><div class="dvl"></div></div>
+
+<!-- ═══════════════ EMPTY SECTIONS ═══════════════ -->
+<section id="analyses" class="empty-section">
+  <div class="stag rv">03 · Analyses & Simulations</div>
+  <h2 class="sh rv">Analyses<br><em>(EXEMPLES)</em></h2>
+
+  <div class="empty-grid">
+    <div class="empty-card rv">
+      <div class="ec-inner">
+        <div class="ec-num">FEA</div>
+        <div class="ec-tag">EXEMPLE</div>
+        <div class="ec-title">Analyse structurelle</div>
+        <div style="font-size:13px;color:var(--dim);line-height:1.7;font-family:var(--plex)">
+          Exemple : contraintes / déformations / facteur de sécurité, à remplir avec tes vrais résultats.
+        </div>
+      </div>
+      <div class="ec-foot">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#2a3050" stroke-width="1.5">
+          <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+        </svg>
+        Section en préparation
+      </div>
+    </div>
+
+    <div class="empty-card rv d1">
+      <div class="ec-inner">
+        <div class="ec-num">CFD</div>
+        <div class="ec-tag">EXEMPLE</div>
+        <div class="ec-title">Thermique / fluides</div>
+        <div style="font-size:13px;color:var(--dim);line-height:1.7;font-family:var(--plex)">
+          Exemple : dissipation, flux, gradients de température. À remplacer selon tes projets.
+        </div>
+      </div>
+      <div class="ec-foot">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#2a3050" stroke-width="1.5">
+          <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+        </svg>
+        Section en préparation
+      </div>
+    </div>
+
+    <div class="empty-card rv d2">
+      <div class="ec-inner">
+        <div class="ec-num">DYN</div>
+        <div class="ec-tag">EXEMPLE</div>
+        <div class="ec-title">Dynamique / vibrations</div>
+        <div style="font-size:13px;color:var(--dim);line-height:1.7;font-family:var(--plex)">
+          Exemple : réponse vibratoire, modes propres. Remplace avec tes résultats.
+        </div>
+      </div>
+      <div class="ec-foot">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#2a3050" stroke-width="1.5">
+          <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+        </svg>
+        Section en préparation
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="dv"><div class="dvl"></div><div class="dvg"></div><div class="dvl"></div></div>
+
+<section id="docs" style="padding:110px 64px;background:var(--bg)">
+  <div class="stag rv">04 · Documentation</div>
+  <h2 class="sh rv">Rapports &<br><em>notes (EXEMPLES)</em></h2>
+  <div class="empty-inner rv">
+    <div class="empty-icon">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2a3050" stroke-width="1.5">
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+        <polyline points="14 2 14 8 20 8"/>
+        <line x1="16" y1="13" x2="8" y2="13"/>
+        <line x1="16" y1="17" x2="8" y2="17"/>
+      </svg>
+    </div>
+    <div class="empty-label">En construction</div>
+    <div class="empty-title">Rapports de projet<br>& notes techniques</div>
+    <div class="empty-sub">
+      Ici tu pourras publier : PDF, notes de calcul, procédures (synthèse), etc.<br>
+      (Toujours sans info confidentielle si c’est un projet de club.)
+    </div>
+    <div class="empty-dots"><span></span><span></span><span></span></div>
+  </div>
+</section>
+
+<div class="dv"><div class="dvl"></div><div class="dvg"></div><div class="dvl"></div></div>
+
+<!-- ═══════════════ EXPERIENCE ═══════════════ -->
+<section id="experience">
+  <div class="stag rv">05 · Parcours</div>
+  <h2 class="sh rv">Expériences<br>& <em>formation</em></h2>
+
+  <div class="exl">
+    <div class="exsb rv">
+      <div class="exni act" data-i="0"><div class="exnd"></div><span class="exnt">Esteban</span></div>
+      <div class="exni" data-i="1"><div class="exnd"></div><span class="exnt">Métro</span></div>
+      <div class="exni" data-i="2"><div class="exnd"></div><span class="exnt">Polytechnique</span></div>
+      <div class="exni" data-i="3"><div class="exnd"></div><span class="exnt">Cégep</span></div>
+    </div>
+
+    <div class="exlist">
+      <div class="exi rv" data-i="0">
+        <div class="exdate">2025 — présent</div>
+        <div class="exrole">Membre — Société technique (conception mécanique)</div>
+        <div class="exorg">Esteban · Polytechnique Montréal</div>
+        <p class="exbody">
+          Participation à des projets de conception (ex. boîtiers électroniques) : documentation, présentation et explication aux membres,
+          et réflexion sur les matériaux selon contraintes et coûts. :contentReference[oaicite:2]{index=2}
+        </p>
+        <div class="exhls">
+          <span class="exhl">Conception de boîtiers (DCU, Power + Aux + Flashers) — détails à compléter</span>
+          <span class="exhl">Collaboration avec l’équipe électronique / intégration</span>
+          <span class="exhl">Documentation et communication technique</span>
+        </div>
+      </div>
+
+      <div class="exi rv d1" data-i="1">
+        <div class="exdate">2024 — 2025</div>
+        <div class="exrole">Emballeur — Métro Plus</div>
+        <div class="exorg">Emploi étudiant</div>
+        <p class="exbody">
+          Travail en environnement dynamique : priorisation, rigueur, communication et fiabilité. :contentReference[oaicite:3]{index=3}
+        </p>
+        <div class="exhls">
+          <span class="exhl">Gestion du rythme + qualité de service</span>
+          <span class="exhl">Fiabilité et travail d’équipe</span>
+        </div>
+      </div>
+
+      <div class="exi rv d2" data-i="2">
+        <div class="exdate">2025 — présent</div>
+        <div class="exrole">B.Ing. — Génie mécanique</div>
+        <div class="exorg">Polytechnique Montréal</div>
+        <p class="exbody">
+          Formation en génie mécanique + projets intégrateurs (ex. outil pour déplacer des charges lourdes). :contentReference[oaicite:4]{index=4}
+        </p>
+        <div class="exhls">
+          <span class="exhl">Projet intégrateur : étude de marché + conception selon normes SST</span>
+          <span class="exhl">Compétences CAO (CATIA, SolidWorks, AutoCAD) + Python</span>
+        </div>
+      </div>
+
+      <div class="exi rv d3" data-i="3">
+        <div class="exdate">Avant l’université</div>
+        <div class="exrole">Cégep — Sciences de la nature (EXEMPLE si à corriger)</div>
+        <div class="exorg">À remplacer si besoin</div>
+        <p class="exbody">
+          Mets ton vrai programme cégep si tu veux, sinon enlève cette section.
+        </p>
+        <div class="exhls">
+          <span class="exhl">(ex.) Physique, maths, préparation au bac</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ CONTACT ═══════════════ -->
+<section id="contact">
+  <div class="ctbg">CONTACT</div>
+
+  <div class="ctc">
+    <div class="ctbadge rv">
+      <span class="sdot sdot-a"></span>
+      EXEMPLE — Disponibilités à préciser
+    </div>
+
+    <h2 class="cth rv">Parlons<br><span>ingénierie</span></h2>
+
+    <!-- Mets ton vrai email ici (celui de ton CV existe déjà). -->
+    <a href="mailto:vincentlabrecquetran@gmail.com" class="ctemail rv">vincentlabrecquetran@gmail.com</a>
+
+    <div class="ctnote rv">Remplace GitHub/LinkedIn + ajoute ton CV (cv.pdf)</div>
+
+    <div class="ctsoc rv d1">
+      <a href="https://github.com/vincentlabrecquetran" class="csoc" target="_blank" rel="noreferrer">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+        GitHub
+      </a>
+
+      <a href="https://linkedin.com/in/ton-profil" class="csoc" target="_blank" rel="noreferrer">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+        LinkedIn (ex.)
+      </a>
+
+      <a href="cv.pdf" class="csoc" download>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        CV PDF
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <span>© <span id="yy"></span> <span class="fa">Vincent Labrecque-Tran</span></span>
+  <span>HTML · CSS · JS — Aucun framework</span>
+  <span>Montréal, <span class="fa">QC</span></span>
+</footer>
+
+<script>
+/* FOOTER YEAR */
+document.getElementById("yy").textContent = new Date().getFullYear();
+
+/* LOADER */
+const ln = document.getElementById('ln');
+const loader = document.getElementById('loader');
+let p = 0;
+
+if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+  const lt = setInterval(() => {
+    p += Math.random() * 14 + 5;
+    if (p >= 100) {
+      p = 100;
+      clearInterval(lt);
+      setTimeout(() => loader.classList.add('out'), 450);
+    }
+    ln.textContent = String(Math.floor(p)).padStart(2, '0');
+  }, 80);
+} else {
+  loader.classList.add('out');
+}
+
+/* CURSOR */
+const cd = document.getElementById('cd');
+const cr = document.getElementById('cr');
+
+const finePointer = window.matchMedia("(pointer:fine)").matches;
+if (finePointer) {
+  let mx = 0, my = 0, rx = 0, ry = 0;
+
+  document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+
+  (function animateCursor(){
+    rx += (mx - rx) * .13;
+    ry += (my - ry) * .13;
+    cd.style.cssText = `left:${mx}px;top:${my}px;`;
+    cr.style.left = rx + 'px';
+    cr.style.top = ry + 'px';
+    requestAnimationFrame(animateCursor);
+  })();
+
+  document.querySelectorAll('a,button').forEach(el => {
+    el.addEventListener('mouseenter', () => cr.classList.add('hov'));
+    el.addEventListener('mouseleave', () => cr.classList.remove('hov'));
+  });
+} else {
+  // fallback: show normal cursor
+  document.body.style.cursor = 'auto';
+  cd.style.display = 'none';
+  cr.style.display = 'none';
+}
+
+/* PROGRESS */
+const pr = document.getElementById('pr');
+window.addEventListener('scroll', () => {
+  const s = document.documentElement;
+  const denom = (s.scrollHeight - s.clientHeight) || 1;
+  pr.style.width = (s.scrollTop / denom * 100) + '%';
+});
+
+/* NAV */
+const nv = document.getElementById('nv');
+window.addEventListener('scroll', () => nv.classList.toggle('c', scrollY > 50));
+
+/* BLUEPRINT CANVAS */
+const bpc = document.getElementById('bpc');
+const ctx = bpc.getContext('2d', { alpha: true });
+
+function rsz(){
+  bpc.width = bpc.offsetWidth;
+  bpc.height = bpc.offsetHeight;
+  drw();
+}
+
+function drw(){
+  ctx.clearRect(0,0,bpc.width,bpc.height);
+
+  const S = 52;
+
+  // minor grid
+  ctx.strokeStyle = '#101d30';
+  ctx.lineWidth = .5;
+  for(let x=0;x<bpc.width;x+=S){
+    ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,bpc.height);ctx.stroke();
+  }
+  for(let y=0;y<bpc.height;y+=S){
+    ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(bpc.width,y);ctx.stroke();
+  }
+
+  // major grid
+  ctx.strokeStyle = '#162030';
+  ctx.lineWidth = 1;
+  for(let x=0;x<bpc.width;x+=S*4){
+    ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,bpc.height);ctx.stroke();
+  }
+  for(let y=0;y<bpc.height;y+=S*4){
+    ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(bpc.width,y);ctx.stroke();
+  }
+
+  // target rings
+  const cx2 = bpc.width * .72, cy2 = bpc.height * .5;
+  [140,210,290].forEach(r=>{
+    ctx.beginPath();
+    ctx.arc(cx2,cy2,r,0,Math.PI*2);
+    ctx.strokeStyle='#101d30';
+    ctx.lineWidth=.5;
+    ctx.stroke();
+  });
+
+  // crosshair
+  ctx.strokeStyle='rgba(240,165,0,.15)';
+  ctx.lineWidth=.6;
+  ctx.beginPath();ctx.moveTo(cx2-22,cy2);ctx.lineTo(cx2+22,cy2);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(cx2,cy2-22);ctx.lineTo(cx2,cy2+22);ctx.stroke();
+}
+
+window.addEventListener('resize', rsz);
+rsz();
+
+/* TYPEWRITER (EXEMPLES, pas des affirmations) */
+const phrases = [
+  'EXEMPLE : CATIA V5 & 3DExperience.',
+  'EXEMPLE : du concept au prototype.',
+  'EXEMPLE : documentation + intégration.',
+  'Société technique Esteban · Polytechnique.'
+];
+let pi = 0, ci = 0, del = false;
+const tw = document.getElementById('tw');
+
+function type(){
+  const ph = phrases[pi];
+  if(!del){
+    tw.textContent = ph.slice(0, ++ci);
+    if(ci === ph.length){ del = true; setTimeout(type, 1500); return; }
+    setTimeout(type, 42);
+  } else {
+    tw.textContent = ph.slice(0, --ci);
+    if(ci === 0){ del = false; pi = (pi+1)%phrases.length; setTimeout(type, 260); return; }
+    setTimeout(type, 22);
+  }
+}
+setTimeout(type, 900);
+
+/* SCROLL REVEAL */
+const ro = new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      e.target.classList.add('in');
+      ro.unobserve(e.target);
+    }
+  });
+},{threshold:.1});
+document.querySelectorAll('.rv').forEach(el=>ro.observe(el));
+
+/* SKILL BARS (fix: ton script était coupé) */
+const skillBars = document.querySelectorAll('.skf[data-w]');
+const so = new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(!e.isIntersecting) return;
+    const bar = e.target;
+    const w = bar.getAttribute('data-w') || "0%";
+    requestAnimationFrame(()=>{ bar.style.width = w; });
+    so.unobserve(bar);
+  });
+},{threshold:0.35});
+skillBars.forEach(b=>so.observe(b));
+
+/* EXPERIENCE SIDEBAR ACTIVE (petit "wow") */
+const exItems = Array.from(document.querySelectorAll('.exi[data-i]'));
+const exNav = Array.from(document.querySelectorAll('.exni[data-i]'));
+
+function setExActive(i){
+  exNav.forEach(n=>n.classList.toggle('act', n.getAttribute('data-i') === String(i)));
+}
+
+const exObs = new IntersectionObserver(entries=>{
+  // prend la plus visible
+  const visible = entries
+    .filter(e=>e.isIntersecting)
+    .sort((a,b)=>b.intersectionRatio - a.intersectionRatio)[0];
+  if(visible){
+    const i = visible.target.getAttribute('data-i');
+    setExActive(i);
+  }
+},{threshold:[0.35,0.55,0.75]});
+
+exItems.forEach(el=>exObs.observe(el));
+
+// clic nav -> scroll
+exNav.forEach(n=>{
+  n.addEventListener('click', ()=>{
+    const i = n.getAttribute('data-i');
+    const target = document.querySelector(`.exi[data-i="${i}"]`);
+    if(target) target.scrollIntoView({behavior:'smooth', block:'start'});
+  });
+});
+</script>
+</body>
+</html>
